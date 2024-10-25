@@ -2,13 +2,26 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Gemini Chat Web Application" />
     <link rel="icon" href="%PUBLIC_URL%/ai_studio_favicon_16x16.ico" />
     <title>Gemini Chat</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+      }
+      #root {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
   </head>
-  <body style="overflow: hidden;">
+  <body>
     <noscript>您需要启用 JavaScript 来运行此应用。</noscript>
     <div id="root"></div>
   </body>

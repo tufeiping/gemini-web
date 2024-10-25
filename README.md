@@ -41,3 +41,20 @@ npm run build
 然后可以部署到任何静态文件服务器上。
 
 <img src="./screen.png" alt="screen" />
+
+或者直接部署到 `vercel` 上：
+
+```shell
+vercel --prod
+```
+
+[Gemini Chat https://gemini-yonyou.vercel.app/](https://gemini-yonyou.vercel.app/)
+
+## 设置
+
+1. 复制 `.env.example` 文件为 `.env`
+2. 在 `.env` 文件中设置您的 API Key：
+   ```
+   REACT_APP_DEFAULT_API_KEY=your_api_key_here
+   ```
+3. 对于生产部署，在您的部署平台中设置环境变量 `REACT_APP_DEFAULT_API_KEY`。

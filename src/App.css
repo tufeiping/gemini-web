@@ -9,14 +9,13 @@ body, html {
 .App {
   display: flex;
   flex-direction: column;
-  max-width: 1000px; /* 将最大宽度从 800px 改为 1000px */
+  max-width: 1000px;
   height: 100vh;
   margin: 0 auto;
   padding: 20px;
   background-color: #ffffff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   box-sizing: border-box;
-  overflow: hidden; /* 添加这一行 */
 }
 
 header {
@@ -126,9 +125,8 @@ h1 {
   margin-bottom: 20px;
   padding: 10px;
   border-radius: 4px;
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #888 #f1f1f1; /* Firefox */
-  max-height: calc(100vh - 180px); /* 添加这一行 */
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
 }
 
 /* Webkit browsers like Chrome/Safari */
@@ -203,6 +201,10 @@ h1 {
 
 .input-form {
   display: flex;
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  padding: 10px 0;
 }
 
 input[type="text"] {
@@ -440,24 +442,36 @@ button:hover {
 
 .header-buttons {
   display: flex;
-  gap: 10px;
+  gap: 5px;
 }
 
-.new-session-button {
-  background-color: #2196F3; /* 改为蓝色 */
+.new-session-button,
+.settings-button {
+  background-color: #2196F3;
   color: white;
   border: none;
-  padding: 10px 15px;
+  padding: 8px 12px;
   cursor: pointer;
   border-radius: 4px;
   font-size: 14px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  min-width: 100px;
   gap: 5px;
 }
 
+.settings-button {
+  background-color: #4CAF50;
+}
+
 .new-session-button:hover {
-  background-color: #1976D2; /* 深蓝色作为悬停效果 */
+  background-color: #1976D2;
+}
+
+.settings-button:hover {
+  background-color: #45a049;
 }
 
 .new-session-button svg {
@@ -469,12 +483,68 @@ button:hover {
   fill: white;
 }
 
-/* 调整设置按钮的样式以匹配新会话按钮 */
-.settings-button {
-  font-size: 14px;
+/* 移动端样式 */
+@media (max-width: 600px) {
+  .new-session-button,
+  .settings-button {
+    font-size: 12px;
+    padding: 6px 10px;
+    min-width: auto;
+  }
+
+  .new-session-button svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
-/* Sweetalert2 样式覆盖 */
+/* 确保在移动端底部输入框可见 */
+@media (max-width: 600px) {
+  .App {
+    padding: 10px;
+    height: 100%;
+    min-height: 100vh;
+  }
+
+  .chat-container {
+    max-height: calc(100vh - 180px);
+    margin-bottom: 60px;
+  }
+
+  .input-form {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .header-buttons {
+    flex-wrap: wrap;
+  }
+
+  .new-session-button,
+  .settings-button {
+    flex: 1;
+    min-width: auto;
+  }
+}
+
+/* 确保在大屏幕上有合适的宽度 */
+@media (min-width: 601px) {
+  .App {
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .chat-container {
+    height: calc(100vh - 200px);
+  }
+}
+
+/* ... 其他样式保持不变 ... */
+
 .swal2-popup {
   font-size: 0.9rem;
 }
@@ -488,3 +558,4 @@ body.swal2-shown > [aria-hidden="true"] {
   transition: 0.1s filter;
   filter: blur(1px);
 }
+
