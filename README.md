@@ -16,7 +16,7 @@
 
 1. 克隆仓库：
    ```
-   git clone https://github.com/tufeiping/gemini-web
+   git clone https://github.com/tufeiping/gemini-web.git
    cd gemini-web
    ```
 
