@@ -8,6 +8,8 @@ import { zhCN } from 'date-fns/locale';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import './App.css';
 
 function App() {
@@ -75,9 +77,16 @@ function App() {
         const content = resendContent || input;
         if (!content.trim()) return;
 
-        const newUserMessage = { role: 'user', content, timestamp: new Date().toISOString() };
-        const updatedMessages = resendContent ? messages : [...messages, newUserMessage];
-        !resendContent && setMessages(updatedMessages);
+        let updatedMessages;
+        if (resendContent && messages[messages.length - 1].role === 'user' && messages[messages.length - 1].content === resendContent) {
+            // 如果是重新发送最后一条用户消息，不添加新消息
+            updatedMessages = [...messages];
+        } else {
+            // 否则，添加新的用户消息
+            const newUserMessage = { role: 'user', content, timestamp: new Date().toISOString() };
+            updatedMessages = [...messages, newUserMessage];
+            setMessages(updatedMessages);
+        }
         setInput('');
 
         // 获取最近6条消息作为上下文
@@ -108,11 +117,11 @@ function App() {
                 setMessages([...updatedMessages, newAiMessage]);
             } else {
                 console.error('Unexpected API response structure:', data);
-                alert('获取 AI 响应失败，请重试或检查您的 API 密钥。');
+                Swal.fire('错误', '获取 AI 响应失败，请重试或检查您的 API 密钥。', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('发送消息时出错，请重试。');
+            Swal.fire('错误', '发送消息时出错，请重试。', 'error');
         }
     };
 
@@ -166,22 +175,59 @@ function App() {
     );
 
     const deleteMessage = (index) => {
-        if (window.confirm('确定要删除这条消息吗？此操作不可撤销。')) {
-            const updatedMessages = messages.filter((_, i) => i !== index);
-            setMessages(updatedMessages);
-        }
+        Swal.fire({
+            title: '确定要删除这条消息吗?',
+            text: "此操作不可撤销!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '是,删除它',
+            cancelButtonText: '取消'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const updatedMessages = messages.filter((_, i) => i !== index);
+                setMessages(updatedMessages);
+                Swal.fire(
+                    '已删除!',
+                    '该消息已被删除。',
+                    'success'
+                );
+            }
+        });
     };
 
     const clearHistory = () => {
-        if (window.confirm('确定要删除所有历史记录吗？此操作不可撤销。')) {
-            setMessages([]);
-            localStorage.removeItem('geminiChatAppHistory_v1');
-        }
+        Swal.fire({
+            title: '确定要删除所有历史记录吗?',
+            text: "此操作不可撤销!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '是,删除所有',
+            cancelButtonText: '取消'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setMessages([]);
+                localStorage.removeItem('geminiChatAppHistory_v1');
+                Swal.fire(
+                    '已清空!',
+                    '所有历史记录已被删除。',
+                    'success'
+                );
+            }
+        });
     };
 
     const exportHistory = () => {
         if (messages.length === 0) {
-            alert('当前没有聊天记录可供导出。');
+            Swal.fire({
+                title: '无可导出的记录',
+                text: '当前没有聊天记录可供导出。',
+                icon: 'info',
+                confirmButtonText: '确定'
+            });
             return;
         }
         
@@ -195,6 +241,13 @@ function App() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+
+        Swal.fire({
+            title: '导出成功',
+            text: '聊天记录已成功导出。',
+            icon: 'success',
+            confirmButtonText: '确定'
+        });
     };
 
     const importHistory = (event) => {
@@ -205,15 +258,30 @@ function App() {
                 try {
                     const importedMessages = JSON.parse(e.target.result);
                     if (importedMessages.length === 0) {
-                        alert('导入的文件不包含任何聊天记录。');
+                        Swal.fire({
+                            title: '导入失败',
+                            text: '导入的文件不包含任何聊天记录。',
+                            icon: 'error',
+                            confirmButtonText: '确定'
+                        });
                         return;
                     }
                     setMessages(importedMessages);
                     localStorage.setItem('geminiChatAppHistory_v1', JSON.stringify(importedMessages));
-                    alert('历史记录导入成功');
+                    Swal.fire({
+                        title: '导入成功',
+                        text: '历史记录已成功导入。',
+                        icon: 'success',
+                        confirmButtonText: '确定'
+                    });
                 } catch (error) {
                     console.error('Error parsing imported file:', error);
-                    alert('导入失败，请确保文件格式正确');
+                    Swal.fire({
+                        title: '导入失败',
+                        text: '导入失败，请确保文件格式正确。',
+                        icon: 'error',
+                        confirmButtonText: '确定'
+                    });
                 }
             };
             reader.readAsText(file);
@@ -224,6 +292,29 @@ function App() {
         setModel(e.target.value);
     };
 
+    const startNewSession = () => {
+        Swal.fire({
+            title: '启用新会话?',
+            text: '启用新的会话会清除已有历史记录，您可以在设置中先保存当前会话内容然后再启用新会话。',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '是,启用新会话',
+            cancelButtonText: '取消'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setMessages([]);
+                localStorage.removeItem('geminiChatAppHistory_v1');
+                Swal.fire(
+                    '已启用新会话',
+                    '所有历史记录已被清除。',
+                    'success'
+                );
+            }
+        });
+    };
+
     return (
         <div className="App">
             <header>
@@ -231,9 +322,17 @@ function App() {
                     <img src="/ai_studio_favicon_16x16.ico" alt="Gemini Chat Logo" className="app-logo" />
                     <h1>Gemini Chat</h1>
                 </div>
-                <button onClick={() => setShowSettings(!showSettings)} className="settings-button">
-                    🛠️ 设置
-                </button>
+                <div className="header-buttons">
+                    <button onClick={startNewSession} className="new-session-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 21.5C12 20.1833 11.75 18.95 11.25 17.8C10.75 16.6333 10.075 15.625 9.225 14.775C8.375 13.925 7.36667 13.25 6.2 12.75C5.05 12.25 3.81667 12 2.5 12C3.81667 12 5.05 11.75 6.2 11.25C7.36667 10.75 8.375 10.075 9.225 9.225C10.075 8.375 10.75 7.375 11.25 6.225C11.75 5.05833 12 3.81667 12 2.5C12 3.81667 12.25 5.05833 12.75 6.225C13.25 7.375 13.925 8.375 14.775 9.225C15.625 10.075 16.625 10.75 17.775 11.25C18.9417 11.75 20.1833 12 21.5 12C20.1833 12 18.9417 12.25 17.775 12.75C16.625 13.25 15.625 13.925 14.775 14.775C13.925 15.625 13.25 16.6333 12.75 17.8C12.25 18.95 12 20.1833 12 21.5Z" className="sparkle" />
+                        </svg>
+                        新会话
+                    </button>
+                    <button onClick={() => setShowSettings(!showSettings)} className="settings-button">
+                        🛠️ 设置
+                    </button>
+                </div>
             </header>
             {showSettings && (
                 <div className="settings-panel">
