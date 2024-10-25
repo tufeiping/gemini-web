@@ -16,8 +16,8 @@
 
 1. 克隆仓库：
    ```
-   git clone https://github.com/your-username/gemini-chat-web.git
-   cd gemini-chat-web
+   git clone https://github.com/tufeiping/gemini-web
+   cd gemini-web
    ```
 
 2. 安装依赖：
