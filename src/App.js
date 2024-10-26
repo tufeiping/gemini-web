@@ -13,6 +13,7 @@ import './App.css';
 import remarkGfm from 'remark-gfm'; // 引入 remark-gfm
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'; // 导入 docco 样式
 import rehypeSanitize from 'rehype-sanitize'; // 导入 rehype-sanitize
+import ErrorBoundary from './components/ErrorBoundary'; // 引入 ErrorBoundary
 
 function App() {
     const [apiKey, setApiKey] = useState(() =>
@@ -32,7 +33,7 @@ function App() {
         }
         return [];
     });
-    const [showSettings, setShowSettings] = useState(false);
+
     const [, forceUpdate] = useState();
     const chatContainerRef = useRef(null);
     const [loading, setLoading] = useState(false); // 添加 loading 状态
@@ -134,12 +135,6 @@ function App() {
 
     const resendMessage = (content) => {
         handleSubmit(null, content);
-    };
-
-    const handleApiKeyChange = (e) => {
-        const newApiKey = e.target.value;
-        setApiKey(newApiKey);
-        localStorage.setItem('apiKey', newApiKey);
     };
 
     const copyToClipboard = (text) => {
@@ -357,7 +352,7 @@ function App() {
                     <div class="setting-item">
                         <button id="importBtn" class="swal2-confirm swal2-styled">📥 导入历史记录</button>
                         <button id="exportBtn" class="swal2-confirm swal2-styled">📤 导出历史记录</button>
-                        <button id="clearBtn" class="swal2-confirm swal2-styled">🗑️ 删除历史记录</button>
+                        <button id="clearBtn" class="swal2-confirm swal2-styled">🗑��� 删除历史记录</button>
                     </div>
                 </div>
             `,
@@ -475,4 +470,10 @@ function App() {
     );
 }
 
-export default App;
+export default function Root() {
+    return (
+        <ErrorBoundary>
+            <App />
+        </ErrorBoundary>
+    );
+}

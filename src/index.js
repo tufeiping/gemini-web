@@ -9,3 +9,16 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+
+// 处理未捕获的错误
+window.addEventListener('error', (event) => {
+  console.error('全局错误:', event.error);
+  // 这里可以添加错误处理逻辑
+});
+
+// 处理未处理的 Promise 拒绝
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('未处理的 Promise 拒绝:', event.reason);
+  // 这里可以添加错误处理逻辑
+});
