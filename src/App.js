@@ -127,7 +127,7 @@ function App() {
             }
         } catch (error) {
             console.error('Error:', error);
-            Swal.fire('错误', '发送消息时出错，请重试。', 'error');
+            Swal.fire('错误', '发送消息时��错，请重试。', 'error');
         } finally {
             setLoading(false); // 结束 loading
         }
@@ -288,7 +288,7 @@ function App() {
                     localStorage.setItem('geminiChatAppHistory_v1', JSON.stringify(importedMessages));
                     Swal.fire({
                         title: '导入成功',
-                        text: '历史记录已成功导入。',
+                        text: '历��记录已成功导入。',
                         icon: 'success',
                         confirmButtonText: '确定'
                     });
@@ -340,11 +340,11 @@ function App() {
                 <div class="settings-container">
                     <div class="setting-item">
                         <label for="apiKey">API Key:</label>
-                        <input type="text" id="apiKey" value="${apiKey}" class="swal2-input" style="margin: 0px;" />
+                        <input type="text" id="apiKey" value="${apiKey}" class="swal2-input" style="margin: 0px; font-size: 0.8em; height: 30px;" /> <!-- 调整字体大小和高度 -->
                     </div>
                     <div class="setting-item">
                         <label for="model">选择模型:</label>
-                        <select id="model" class="swal2-input">
+                        <select id="model" class="swal2-input" style="font-size: 0.8em; height: 30px; padding: 2px;"> <!-- 调整字体大小、高度和内边距 -->
                             <option value="gemini-1.5-flash-latest" ${model === 'gemini-1.5-flash-latest' ? 'selected' : ''}>Gemini 1.5 Flash (最新)</option>
                             <option value="gemini-1.0-pro" ${model === 'gemini-1.0-pro' ? 'selected' : ''}>Gemini 1.0 Pro</option>
                         </select>
@@ -352,7 +352,7 @@ function App() {
                     <div class="setting-item">
                         <button id="importBtn" class="swal2-confirm swal2-styled">📥 导入历史记录</button>
                         <button id="exportBtn" class="swal2-confirm swal2-styled">📤 导出历史记录</button>
-                        <button id="clearBtn" class="swal2-confirm swal2-styled">🗑��� 删除历史记录</button>
+                        <button id="clearBtn" class="swal2-confirm swal2-styled">🗑 删除历史记录</button>
                     </div>
                 </div>
             `,
