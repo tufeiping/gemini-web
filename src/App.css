@@ -1,4 +1,5 @@
-body, html {
+body,
+html {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -9,7 +10,8 @@ body, html {
 .App {
   display: flex;
   flex-direction: column;
-  max-width: 1000px;
+  width: 100%; /* 确保宽度为100% */
+  max-width: 1000px; /* 最大宽度可以保留 */
   height: 100vh;
   margin: 0 auto;
   padding: 20px;
@@ -23,6 +25,7 @@ header {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  flex-wrap: wrap; /* 允许换行 */
 }
 
 h1 {
@@ -31,7 +34,8 @@ h1 {
 }
 
 .settings-button {
-  background-color: #4CAF50; /* 改为绿色 */
+  background-color: #4CAF50;
+  /* 改为绿色 */
   color: white;
   border: none;
   padding: 10px 15px;
@@ -44,7 +48,8 @@ h1 {
 }
 
 .settings-button:hover {
-  background-color: #45a049; /* 深绿色作为悬停效果 */
+  background-color: #45a049;
+  /* 深绿色作为悬停效果 */
 }
 
 .settings-panel {
@@ -159,24 +164,32 @@ h1 {
 }
 
 .avatar {
-  width: 16px;  /* 将宽度从 30px 改为 16px */
-  height: 16px; /* 将高度从 30px 改为 16px */
+  width: 16px;
+  /* 将宽度从 30px 改为 16px */
+  height: 16px;
+  /* 将高度从 30px 改为 16px */
   flex-shrink: 0;
-  border-radius: 50%; /* 添加圆角效果 */
-  overflow: hidden; /* 确保内容不会溢出圆形边界 */
+  border-radius: 50%;
+  /* 添加圆角效果 */
+  overflow: hidden;
+  /* 确保内容不会溢出圆形边界 */
 }
 
 .llm-avatar {
-  color: #2196F3; /* 从绿色改为蓝色 */
+  color: #2196F3;
+  /* 从绿色改为蓝色 */
   margin-right: 8px;
-  background-color: #E3F2FD; /* 浅蓝色背景 */
+  background-color: #E3F2FD;
+  /* 浅蓝色背景 */
   padding: 2px;
 }
 
 .user-avatar {
-  color: #1976D2; /* 稍深的蓝色 */
+  color: #1976D2;
+  /* 稍深的蓝色 */
   margin-left: 8px;
-  background-color: #BBDEFB; /* 稍深的浅蓝色背景 */
+  background-color: #BBDEFB;
+  /* 稍深的浅蓝色背景 */
   padding: 2px;
 }
 
@@ -185,17 +198,21 @@ h1 {
   padding: 10px;
   border-radius: 4px;
   max-width: calc(90% - 24px);
-  font-size: 14px; /* 添加这一行来设置消息内容的字体大小 */
-  line-height: 1.5; /* 添加这一行来优化行间距 */
+  font-size: 14px;
+  /* 添加这一行来设置消息内容的字体大小 */
+  line-height: 1.5;
+  /* 添加这一行来优化行间距 */
 }
 
 .user .message-content {
-  background-color: #E3F2FD; /* 浅蓝色背景 */
+  background-color: #E3F2FD;
+  /* 浅蓝色背景 */
   margin-right: 10px;
 }
 
 .ai .message-content {
-  background-color: #F5F5F5; /* 保持浅灰色，以区分用户和 AI 消息 */
+  background-color: #F5F5F5;
+  /* 保持浅灰色，以区分用户和 AI 消息 */
   margin-left: 10px;
 }
 
@@ -216,7 +233,8 @@ input[type="text"] {
 
 button {
   padding: 10px 20px;
-  background-color: #2196F3; /* 从绿色改为蓝色 */
+  background-color: #2196F3;
+  /* 从绿色改为蓝色 */
   color: white;
   border: none;
   cursor: pointer;
@@ -224,7 +242,8 @@ button {
 }
 
 button:hover {
-  background-color: #1976D2; /* 稍深的蓝色作为悬停效果 */
+  background-color: #1976D2;
+  /* 稍深的蓝色作为悬停效果 */
 }
 
 .message-toolbar {
@@ -243,11 +262,13 @@ button:hover {
   padding: 0;
   font-size: 0.9em;
   margin-right: 10px;
-  color: #2196F3; /* 从绿色改为蓝色 */
+  color: #2196F3;
+  /* 从绿色改为蓝色 */
 }
 
 .message-toolbar .delete-button {
-  color: #ff4d4f; /* 保持删除按钮为红色 */
+  color: #ff4d4f;
+  /* 保持删除按钮为红色 */
 }
 
 .message-toolbar button:hover {
@@ -259,19 +280,23 @@ button:hover {
   margin: 0 0 10px 0;
 }
 
-.message h1, .message h2, .message h3, .message h4, .message h5, .message h6 {
+.message h1,
+.message h2,
+.message h3,
+.message h4,
+.message h5,
+.message h6 {
   margin: 15px 0 10px 0;
 }
 
-.message ul, .message ol {
+.message ul,
+.message ol {
   margin: 0 0 10px 20px;
 }
 
 .message pre {
   background-color: #f4f4f4;
-  padding: 10px;
   border-radius: 4px;
-  overflow-x: auto;
 }
 
 .message code {
@@ -289,7 +314,8 @@ button:hover {
 }
 
 .clear-history-button {
-  background-color: #FF5252; /* 保持红色，但使用稍微不同的色调 */
+  background-color: #FF5252;
+  /* 保持红色，但使用稍微不同的色调 */
   color: white;
   border: none;
   padding: 10px 15px;
@@ -299,26 +325,46 @@ button:hover {
 }
 
 .clear-history-button:hover {
-  background-color: #FF1744; /* 稍深的红色作为悬停效果 */
+  background-color: #FF1744;
+  /* 稍深的红色作为悬停效果 */
 }
 
 /* 调整标题大小 */
-.message h1 { font-size: 1.8em; }
-.message h2 { font-size: 1.5em; }
-.message h3 { font-size: 1.3em; }
-.message h4 { font-size: 1.2em; }
-.message h5 { font-size: 1.1em; }
-.message h6 { font-size: 1em; }
+.message h1 {
+  font-size: 1.8em;
+}
+
+.message h2 {
+  font-size: 1.5em;
+}
+
+.message h3 {
+  font-size: 1.3em;
+}
+
+.message h4 {
+  font-size: 1.2em;
+}
+
+.message h5 {
+  font-size: 1.1em;
+}
+
+.message h6 {
+  font-size: 1em;
+}
 
 /* 调整代码块和内联的字体大小 */
 .message pre,
 .message code {
-  font-size: 13px; /* 代码通常稍小一些 */
+  font-size: 13px;
+  /* 代码通常稍小一些 */
 }
 
 /* 调整工具栏字体大小 */
 .message-toolbar {
-  font-size: 12px; /* 工具栏可以更小一些 */
+  font-size: 12px;
+  /* 工具栏可以更小一些 */
 }
 
 .title-container {
@@ -340,102 +386,103 @@ button:hover {
 
 .export-history-button,
 .import-history-label {
-    background-color: #2196F3;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 4px;
-    align-self: flex-start;
-    font-size: 14px;
-    text-align: center;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  align-self: flex-start;
+  font-size: 14px;
+  text-align: center;
 }
 
 .export-history-button:hover,
 .import-history-label:hover {
-    background-color: #1976D2;
+  background-color: #1976D2;
 }
 
 .import-history-label {
-    display: inline-block;
+  display: inline-block;
 }
 
 @media (max-width: 600px) {
-    .history-buttons {
-        flex-direction: column;
-    }
+  .history-buttons {
+    flex-direction: column;
+  }
 }
 
 .create-api-key-link {
-    color: #2196F3;
-    text-decoration: none;
-    font-size: 14px;
-    white-space: nowrap;
-    margin-left: 10px;
+  color: #2196F3;
+  text-decoration: none;
+  font-size: 14px;
+  white-space: nowrap;
+  margin-left: 10px;
 }
 
 .create-api-key-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .model-select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #e1e4e8;
-    border-radius: 4px;
-    background-color: white;
-    font-size: 14px;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #e1e4e8;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
 }
 
 .create-api-key-link {
-    color: #2196F3;
-    text-decoration: none;
-    margin-left: 110px;
-    font-size: 14px;
+  color: #2196F3;
+  text-decoration: none;
+  margin-left: 110px;
+  font-size: 14px;
 }
 
 .create-api-key-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .api-key-input,
 .model-select {
-    flex-grow: 1;
-    padding: 8px;
-    border: 1px solid #e1e4e8;
-    border-radius: 4px;
-    font-size: 14px;
-    height: 32px;
-    box-sizing: border-box;
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #e1e4e8;
+  border-radius: 4px;
+  font-size: 14px;
+  height: 32px;
+  box-sizing: border-box;
 }
 
 .create-api-key-link {
-    color: #2196F3;
-    text-decoration: none;
-    margin-left: 110px;
-    font-size: 14px;
-    display: block;
-    margin-top: 5px;
-    margin-bottom: 10px;
+  color: #2196F3;
+  text-decoration: none;
+  margin-left: 110px;
+  font-size: 14px;
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 /* 调整设置面板的样式 */
 .settings-panel {
-    background-color: #f9f9f9;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
+  background-color: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
 }
 
 .message-toolbar button.resend-button {
-    color: #2196F3; /* 使用蓝色来表示这是一个积极的操作 */
+  color: #2196F3;
+  /* 蓝色来表示这是一个积极的操作 */
 }
 
 .message-toolbar button.resend-button:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* ... 其他样式保持不变 */
@@ -443,6 +490,7 @@ button:hover {
 .header-buttons {
   display: flex;
   gap: 5px;
+  flex-wrap: wrap; /* 允许换行 */
 }
 
 .new-session-button,
@@ -485,6 +533,7 @@ button:hover {
 
 /* 移动端样式 */
 @media (max-width: 600px) {
+
   .new-session-button,
   .settings-button {
     font-size: 12px;
@@ -554,8 +603,107 @@ button:hover {
   padding: 0.5em 1em;
 }
 
-body.swal2-shown > [aria-hidden="true"] {
+body.swal2-shown>[aria-hidden="true"] {
   transition: 0.1s filter;
   filter: blur(1px);
+}
+
+table {
+  border-collapse: collapse;
+  /* 合并边框 */
+  width: 100%;
+  /* 表格宽度 */
+}
+
+th,
+td {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  /* 添加单线条边框，颜色较淡 */
+  padding: 8px;
+  /* 内边距 */
+  text-align: left;
+  /* 左对齐 */
+}
+
+th {
+  background-color: rgba(0, 0, 0, 0.05);
+  /* 表头背景色 */
+}
+
+/* 代码块样式 */
+pre {
+  margin: 1em 0;
+  overflow-x: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 内联代码样式 */
+:not(pre)>code {
+  background-color: #f0f0f0;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: #333;
+}
+
+/* 调整 SyntaxHighlighter 容器样式 */
+.react-syntax-highlighter-line-number {
+  color: #999;
+  font-size: 0.8em;
+}
+
+/* 为 SyntaxHighlighter 添加特定样式 */
+.message .react-syntax-highlighter {
+  background-color: white !important;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+}
+
+/* 为内联代码添加新的样式 */
+.message :not(pre)>code {
+  background-color: #f0f0f0;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: #333;
+}
+
+pre>code {
+  background-color: #FFF;
+}
+
+.swal2-popup {
+    width: 90%; /* 适应移动端 */
+    max-width: 500px; /* 最大宽度 */
+}
+
+.swal2-input {
+    width: 100%; /* 输入框宽度 */
+    margin-bottom: 10px; /* 输入框间距 */
+}
+
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* 增加间距 */
+    overflow: hidden
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column; /* 垂直排列 */
+}
+
+.setting-item label {
+    margin-bottom: 5px; /* 标签与输入框之间的间距 */
+}
+
+.setting-item input,
+.setting-item select {
+    width: 100%; /* 输入框和选择框宽度 */
+    padding: 10px; /* 内边距 */
+    border: 1px solid #e1e4e8; /* 边框 */
+    border-radius: 4px; /* 圆角 */
+    box-sizing: border-box; /* 包含内边距和边框 */
 }
 

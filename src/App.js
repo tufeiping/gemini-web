@@ -7,13 +7,15 @@ import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import rehypeRaw from 'rehype-raw';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './App.css';
+import remarkGfm from 'remark-gfm'; // 引入 remark-gfm
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'; // 导入 docco 样式
+import rehypeSanitize from 'rehype-sanitize'; // 导入 rehype-sanitize
 
 function App() {
-    const [apiKey, setApiKey] = useState(() => 
+    const [apiKey, setApiKey] = useState(() =>
         localStorage.getItem('apiKey') || process.env.REACT_APP_DEFAULT_API_KEY || ''
     );
     const [model, setModel] = useState(() => localStorage.getItem('model') || 'gemini-1.5-flash-latest');
@@ -155,11 +157,27 @@ function App() {
             }
             return <p>{children}</p>;
         },
-        code: ({ language, value }) => (
-            <SyntaxHighlighter language={language}>
-                {value}
-            </SyntaxHighlighter>
-        ),
+        code: ({ node, inline, className, children, ...props }) => {
+            const match = /language-(\w+)/.exec(className || '');
+            const language = match ? match[1] : '';
+            return !inline && match ? (
+                <SyntaxHighlighter
+                    language={language}
+                    style={docco}
+                    customStyle={{
+                        fontSize: '0.9em',
+                        padding: '1em',
+                    }}
+                    {...props}
+                >
+                    {String(children).replace(/\n$/, '')}
+                </SyntaxHighlighter>
+            ) : (
+                <code className={`inline-code ${className || ''}`} {...props}>
+                    {children}
+                </code>
+            );
+        },
     };
 
     const LLMAvatar = () => (
@@ -221,7 +239,8 @@ function App() {
     };
 
     const exportHistory = () => {
-        if (messages.length === 0) {
+        const historyData = localStorage.getItem('geminiChatAppHistory_v1'); // 从 localStorage 获取历史记录
+        if (!historyData) {
             Swal.fire({
                 title: '无可导出的记录',
                 text: '当前没有聊天记录可供导出。',
@@ -230,17 +249,16 @@ function App() {
             });
             return;
         }
-        
-        const historyData = JSON.stringify(messages, null, 2);
-        const blob = new Blob([historyData], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
+
+        const blob = new Blob([historyData], { type: 'application/json' }); // 创建 Blob 对象
+        const url = URL.createObjectURL(blob); // 创建 URL
+        const a = document.createElement('a'); // 创建链接元素
         a.href = url;
-        a.download = 'gemini_chat_history.json';
+        a.download = 'gemini_chat_history.json'; // 设置下载文件名
         document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        a.click(); // 触发下载
+        document.body.removeChild(a); // 移除链接元素
+        URL.revokeObjectURL(url); // 释放 URL
 
         Swal.fire({
             title: '导出成功',
@@ -315,6 +333,61 @@ function App() {
         });
     };
 
+    const handleSettingsClick = () => {
+        Swal.fire({
+            title: '设置',
+            html: `
+                <div class="settings-container">
+                    <div class="setting-item">
+                        <label for="apiKey">API Key:</label>
+                        <input type="text" id="apiKey" value="${apiKey}" class="swal2-input" style="margin: 0px;" />
+                    </div>
+                    <div class="setting-item">
+                        <label for="model">选择模型:</label>
+                        <select id="model" class="swal2-input">
+                            <option value="gemini-1.5-flash-latest" ${model === 'gemini-1.5-flash-latest' ? 'selected' : ''}>Gemini 1.5 Flash (最新)</option>
+                            <option value="gemini-1.0-pro" ${model === 'gemini-1.0-pro' ? 'selected' : ''}>Gemini 1.0 Pro</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <button id="importBtn" class="swal2-confirm swal2-styled">📥 导入历史记录</button>
+                        <button id="exportBtn" class="swal2-confirm swal2-styled">📤 导出历史记录</button>
+                        <button id="clearBtn" class="swal2-confirm swal2-styled">🗑️ 删除历史记录</button>
+                    </div>
+                </div>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: '保存',
+            cancelButtonText: '取消',
+            customClass: {
+                popup: 'swal2-popup',
+                input: 'swal2-input',
+                confirmButton: 'swal2-confirm',
+                cancelButton: 'swal2-cancel'
+            },
+            didOpen: () => {
+                document.getElementById('importBtn').addEventListener('click', () => {
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = '.json';
+                    fileInput.onchange = (event) => importHistory(event);
+                    fileInput.click();
+                });
+                document.getElementById('exportBtn').addEventListener('click', exportHistory);
+                document.getElementById('clearBtn').addEventListener('click', clearHistory);
+            },
+            preConfirm: () => {
+                const newApiKey = document.getElementById('apiKey').value;
+                const newModel = document.getElementById('model').value;
+                setApiKey(newApiKey);
+                setModel(newModel);
+                localStorage.setItem('apiKey', newApiKey);
+                localStorage.setItem('model', newModel);
+            }
+        });
+    };
+
     return (
         <div className="App">
             <header>
@@ -329,53 +402,11 @@ function App() {
                         </svg>
                         新会话
                     </button>
-                    <button onClick={() => setShowSettings(!showSettings)} className="settings-button">
+                    <button onClick={handleSettingsClick} className="settings-button">
                         🛠️ 设置
                     </button>
                 </div>
             </header>
-            {showSettings && (
-                <div className="settings-panel">
-                    <div className="settings-row">
-                        <label htmlFor="apiKey">API Key: </label>
-                        <input
-                            type="text"
-                            id="apiKey"
-                            value={apiKey}
-                            onChange={handleApiKeyChange}
-                            className="api-key-input"
-                        />
-                        <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="create-api-key-link">
-                            创建 API Key
-                        </a>
-                    </div>
-                    <div className="settings-row">
-                        <label htmlFor="model">选择模型: </label>
-                        <select id="model" value={model} onChange={handleModelChange} className="model-select">
-                            <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash (最新)</option>
-                            <option value="gemini-1.0-pro">Gemini 1.0 Pro</option>
-                        </select>
-                    </div>
-                    <div className="history-buttons">
-                        <button onClick={clearHistory} className="clear-history-button">
-                            删除历史记录
-                        </button>
-                        <button onClick={exportHistory} className="export-history-button">
-                            导出历史记录
-                        </button>
-                        <label htmlFor="import-history" className="import-history-label">
-                            导入历史记录
-                            <input
-                                type="file"
-                                id="import-history"
-                                accept=".json"
-                                onChange={importHistory}
-                                style={{ display: 'none' }}
-                            />
-                        </label>
-                    </div>
-                </div>
-            )}
             <div className="chat-container" ref={chatContainerRef}>
                 {messages.map((message, index) => (
                     <div key={index} className={`message ${message.role}`}>
@@ -384,8 +415,8 @@ function App() {
                                 <UserAvatar />
                                 <div className="message-content">
                                     <ReactMarkdown
-                                        remarkPlugins={[remarkMath]}
-                                        rehypePlugins={[rehypeKatex, rehypeRaw]}
+                                        remarkPlugins={[remarkMath, remarkGfm]} // 添加 remark-gfm
+                                        rehypePlugins={[rehypeKatex, rehypeSanitize]} // 添加 rehype-sanitize
                                         components={renderers}
                                     >
                                         {message.content}
@@ -405,8 +436,8 @@ function App() {
                                 <LLMAvatar />
                                 <div className="message-content">
                                     <ReactMarkdown
-                                        remarkPlugins={[remarkMath]}
-                                        rehypePlugins={[rehypeKatex, rehypeRaw]}
+                                        remarkPlugins={[remarkMath, remarkGfm]} // 添加 remark-gfm
+                                        rehypePlugins={[rehypeKatex, rehypeSanitize]} // 添加 rehype-sanitize
                                         components={renderers}
                                     >
                                         {message.content}
