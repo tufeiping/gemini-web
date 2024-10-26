@@ -35,6 +35,7 @@ function App() {
     const [showSettings, setShowSettings] = useState(false);
     const [, forceUpdate] = useState();
     const chatContainerRef = useRef(null);
+    const [loading, setLoading] = useState(false); // 添加 loading 状态
 
     useEffect(() => {
         localStorage.setItem('geminiChatAppHistory_v1', JSON.stringify(messages));
@@ -78,6 +79,8 @@ function App() {
         e && e.preventDefault();
         const content = resendContent || input;
         if (!content.trim()) return;
+
+        setLoading(true); // 开始 loading
 
         let updatedMessages;
         if (resendContent && messages[messages.length - 1].role === 'user' && messages[messages.length - 1].content === resendContent) {
@@ -124,6 +127,8 @@ function App() {
         } catch (error) {
             console.error('Error:', error);
             Swal.fire('错误', '发送消息时出错，请重试。', 'error');
+        } finally {
+            setLoading(false); // 结束 loading
         }
     };
 
@@ -461,9 +466,11 @@ function App() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="输入您的消息..."
+                    disabled={loading} // 
                 />
-                <button type="submit">发送</button>
+                <button type="submit" disabled={loading}>发送</button> {/* 禁用发送按钮 */}
             </form>
+            {loading && <div className="loading"></div>} {/* 显示 loading 动画 */}
         </div>
     );
 }
