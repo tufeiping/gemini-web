@@ -127,7 +127,7 @@ function App() {
             }
         } catch (error) {
             console.error('Error:', error);
-            Swal.fire('错误', '发送消息时��错，请重试。', 'error');
+            Swal.fire('错误', '发送消息时出错，请重试。', 'error');
         } finally {
             setLoading(false); // 结束 loading
         }
@@ -288,7 +288,7 @@ function App() {
                     localStorage.setItem('geminiChatAppHistory_v1', JSON.stringify(importedMessages));
                     Swal.fire({
                         title: '导入成功',
-                        text: '历��记录已成功导入。',
+                        text: '历史记录已成功导入。',
                         icon: 'success',
                         confirmButtonText: '确定'
                     });
