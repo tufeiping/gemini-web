@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { InlineMath, BlockMath } from 'react-katex';
-import 'katex/dist/katex.min.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import Swal from 'sweetalert2';
-import 'sweetalert2/dist/sweetalert2.min.css';
-import './App.css';
 import remarkGfm from 'remark-gfm'; // 引入 remark-gfm
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'; // 导入 docco 样式
 import rehypeSanitize from 'rehype-sanitize'; // 导入 rehype-sanitize
 import ErrorBoundary from './components/ErrorBoundary'; // 引入 ErrorBoundary
+
+import 'katex/dist/katex.min.css';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import './App.css';
 
 function App() {
     const [apiKey, setApiKey] = useState(() =>
