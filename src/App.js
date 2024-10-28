@@ -410,7 +410,7 @@ function App() {
             <header>
                 <div className="title-container">
                     <img src="/ai_studio_favicon_16x16.ico" alt="Gemini Chat Logo" className="app-logo" />
-                    <h1>Gemini Chat</h1>
+                    {/* <h1>Gemini Chat</h1> */}
                 </div>
                 <div className="header-buttons">
                     <button onClick={startNewSession} className="new-session-button">
