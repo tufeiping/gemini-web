@@ -22,10 +22,9 @@ html {
 
 header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap; /* 允许换行 */
+  padding: 10px;
+  gap: 10px;
 }
 
 h1 {
@@ -227,7 +226,6 @@ h1 {
 input[type="text"] {
   flex-grow: 1;
   padding: 10px;
-  border: 1px solid #e1e4e8;
   border-radius: 4px 0 0 4px;
 }
 
@@ -370,6 +368,34 @@ button:hover {
 .title-container {
   display: flex;
   align-items: center;
+  min-width: 0; /* 允许容器缩小到小于内容宽度 */
+  flex: 1; /* 占据剩余空间 */
+  margin-right: 10px; /* 与按钮保持间距 */
+}
+
+.current-session-title {
+  min-width: 50px;
+  max-width: calc(100% - 30px);
+  width: auto;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0 5px;
+  padding: 4px 8px;
+  height: 32px;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 24px;
+  border: none; /* 移除边框 */
+  background: transparent; /* 移除背景色 */
+  outline: none; /* 移除点击时的轮廓 */
+}
+
+.current-session-title:hover,
+.current-session-title:focus {
+  background-color: rgba(0, 0, 0, 0.05); /* 悬停和聚焦时添加轻微背景色 */
+  border-radius: 4px; /* 添加圆角 */
 }
 
 .app-logo {
@@ -489,8 +515,8 @@ button:hover {
 
 .header-buttons {
   display: flex;
-  gap: 5px;
-  flex-wrap: wrap; /* 允许换行 */
+  gap: 8px;
+  flex-shrink: 0; /* 防止按钮被压缩 */
 }
 
 .new-session-button,
@@ -508,6 +534,8 @@ button:hover {
   white-space: nowrap;
   min-width: 100px;
   gap: 5px;
+  height: 32px; /* 确保按钮高度一致 */
+  box-sizing: border-box;
 }
 
 .settings-button {
@@ -736,3 +764,18 @@ pre>code {
         transform: rotate(360deg);
     }
 }
+
+/* 在小屏幕上调整按钮样式 */
+@media (max-width: 480px) {
+  .new-session-button span,
+  .settings-button span {
+    display: none; /* 隐藏按钮文字 */
+  }
+  
+  .new-session-button,
+  .settings-button {
+    padding: 5px 8px; /* 减小按钮内边距 */
+    min-width: auto; /* 移除最小宽度限制 */
+  }
+}
+
