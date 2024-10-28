@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import { InlineMath, BlockMath } from 'react-katex';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -16,11 +17,17 @@ import 'katex/dist/katex.min.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './App.css';
 
+const API_KEY_DEFINE = 'gemini_chat_app_api_key';
+const MODEL_DEFINE = 'gemini_chat_app_model';
+const MODEL_LIST_DEFINE = [{key: 'gemini-1.5-flash-latest', value: 'Gemini 1.5 Flash (最新)'}, {key: 'gemini-1.0-pro', value: 'Gemini 1.0 Pro'}];
+
+
 function App() {
     const [apiKey, setApiKey] = useState(() =>
         localStorage.getItem('apiKey') || process.env.REACT_APP_DEFAULT_API_KEY || ''
     );
-    const [model, setModel] = useState(() => localStorage.getItem('model') || 'gemini-1.5-flash-latest');
+    const [model, setModel] = useState(() => localStorage.getItem(MODEL_DEFINE) || MODEL_LIST_DEFINE[0].key);
+    const [currentList, setCurrentList] = useState('default'); // 当前列表
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState(() => {
         const savedMessages = localStorage.getItem('geminiChatAppHistory_v1');
@@ -44,11 +51,11 @@ function App() {
     }, [messages]);
 
     useEffect(() => {
-        localStorage.setItem('apiKey', apiKey);
+        localStorage.setItem(API_KEY_DEFINE, apiKey);
     }, [apiKey]);
 
     useEffect(() => {
-        localStorage.setItem('model', model);
+        localStorage.setItem(MODEL_DEFINE, model);
     }, [model]);
 
     const formatMessageTime = useCallback((timestamp) => {
@@ -255,7 +262,7 @@ function App() {
         const url = URL.createObjectURL(blob); // 创建 URL
         const a = document.createElement('a'); // 创建链接元素
         a.href = url;
-        a.download = 'gemini_chat_history.json'; // 设置下载文件名
+        a.download = `gemini_chat_history_${currentList}.json`; // 设置下载文件名
         document.body.appendChild(a);
         a.click(); // 触发下载
         document.body.removeChild(a); // 移除链接元素
@@ -307,10 +314,6 @@ function App() {
         }
     };
 
-    const handleModelChange = (e) => {
-        setModel(e.target.value);
-    };
-
     const startNewSession = () => {
         Swal.fire({
             title: '启用新会话?',
@@ -334,39 +337,52 @@ function App() {
         });
     };
 
+    const SettingsContent = ({ apiKey, model }) => {
+        return (
+            <div className="settings-container">
+                <div className="setting-item">
+                    <label htmlFor="apiKey">API Key:</label>
+                    <input
+                        type="text"
+                        id="apiKey"
+                        defaultValue={apiKey}
+                        className="swal2-input"
+                        style={{ margin: 0, fontSize: '0.8em', height: '30px' }}
+                    />
+                </div>
+                <div className="setting-item">
+                    <label htmlFor="model">选择模型:</label>
+                    <select
+                        id="model"
+                        className="swal2-input"
+                        defaultValue={model}
+                        style={{ fontSize: '0.8em', height: '30px', padding: '2px' }}
+                    >
+                        {MODEL_LIST_DEFINE.map((model, index) => (
+                            <option key={index} value={model.key} selected={model.key === model}>{model.value}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="setting-item">
+                    <button id="importBtn" className="swal2-confirm swal2-styled">📥 导入历史记录</button>
+                    <button id="exportBtn" className="swal2-confirm swal2-styled">📤 导出历史记录</button>
+                    <button id="clearBtn" className="swal2-confirm swal2-styled">🗑 删除历史记录</button>
+                </div>
+            </div>
+        );
+    };
+
     const handleSettingsClick = () => {
+        const settingsElement = document.createElement('div');
+        ReactDOM.render(<SettingsContent apiKey={apiKey} model={model} />, settingsElement);
+
         Swal.fire({
             title: '设置',
-            html: `
-                <div class="settings-container">
-                    <div class="setting-item">
-                        <label for="apiKey">API Key:</label>
-                        <input type="text" id="apiKey" value="${apiKey}" class="swal2-input" style="margin: 0px; font-size: 0.8em; height: 30px;" /> <!-- 调整字体大小和高度 -->
-                    </div>
-                    <div class="setting-item">
-                        <label for="model">选择模型:</label>
-                        <select id="model" class="swal2-input" style="font-size: 0.8em; height: 30px; padding: 2px;"> <!-- 调整字体大小、高度和内边距 -->
-                            <option value="gemini-1.5-flash-latest" ${model === 'gemini-1.5-flash-latest' ? 'selected' : ''}>Gemini 1.5 Flash (最新)</option>
-                            <option value="gemini-1.0-pro" ${model === 'gemini-1.0-pro' ? 'selected' : ''}>Gemini 1.0 Pro</option>
-                        </select>
-                    </div>
-                    <div class="setting-item">
-                        <button id="importBtn" class="swal2-confirm swal2-styled">📥 导入历史记录</button>
-                        <button id="exportBtn" class="swal2-confirm swal2-styled">📤 导出历史记录</button>
-                        <button id="clearBtn" class="swal2-confirm swal2-styled">🗑 删除历史记录</button>
-                    </div>
-                </div>
-            `,
+            html: settingsElement,
             focusConfirm: false,
             showCancelButton: true,
             confirmButtonText: '保存',
             cancelButtonText: '取消',
-            customClass: {
-                popup: 'swal2-popup',
-                input: 'swal2-input',
-                confirmButton: 'swal2-confirm',
-                cancelButton: 'swal2-cancel'
-            },
             didOpen: () => {
                 document.getElementById('importBtn').addEventListener('click', () => {
                     const fileInput = document.createElement('input');
@@ -383,8 +399,8 @@ function App() {
                 const newModel = document.getElementById('model').value;
                 setApiKey(newApiKey);
                 setModel(newModel);
-                localStorage.setItem('apiKey', newApiKey);
-                localStorage.setItem('model', newModel);
+                localStorage.setItem(API_KEY_DEFINE, newApiKey);
+                localStorage.setItem(MODEL_DEFINE, newModel);
             }
         });
     };
