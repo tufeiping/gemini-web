@@ -19,21 +19,22 @@ import './App.css';
 
 const API_KEY_DEFINE = 'gemini_chat_app_api_key';
 const MODEL_DEFINE = 'gemini_chat_app_model';
-const MODEL_LIST_DEFINE = [{key: 'gemini-1.5-flash-latest', value: 'Gemini 1.5 Flash (最新)'}, {key: 'gemini-1.0-pro', value: 'Gemini 1.0 Pro'}];
-
+const MODEL_LIST_DEFINE = [{ key: 'gemini-1.5-flash-latest', value: 'Gemini 1.5 Flash (最新)' }, { key: 'gemini-1.0-pro', value: 'Gemini 1.0 Pro' }];
+const CHAT_HISTORY_LIST_DEFINE = 'gemini-chat-history_v1';
 
 function App() {
     const [apiKey, setApiKey] = useState(() =>
-        localStorage.getItem('apiKey') || process.env.REACT_APP_DEFAULT_API_KEY || ''
+        localStorage.getItem(API_KEY_DEFINE) || process.env.REACT_APP_DEFAULT_API_KEY || ''
     );
     const [model, setModel] = useState(() => localStorage.getItem(MODEL_DEFINE) || MODEL_LIST_DEFINE[0].key);
-    const [currentList, setCurrentList] = useState('default'); // 当前列表
+    const [currentListName, setCurrentList] = useState('default'); // 当前列表
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState(() => {
-        const savedMessages = localStorage.getItem('geminiChatAppHistory_v1');
-        if (savedMessages) {
+        const histories = JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [];
+        const savedMessages = histories.find(item => item.name === currentListName);
+        if (savedMessages && savedMessages.history) {
             try {
-                return JSON.parse(savedMessages);
+                return savedMessages.history;
             } catch (error) {
                 console.error('Error parsing saved messages:', error);
                 return [];
@@ -47,7 +48,18 @@ function App() {
     const [loading, setLoading] = useState(false); // 添加 loading 状态
 
     useEffect(() => {
-        localStorage.setItem('geminiChatAppHistory_v1', JSON.stringify(messages));
+        const histories = JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [];
+        // 找到currentList的历史记录，然后覆盖
+        const currentHistory = histories.find(item => item.name === currentListName);
+        if (currentHistory) {
+            currentHistory.history = messages;
+        } else {
+            histories.push({
+                'name': currentListName,
+                'history': messages
+            });
+        }
+        localStorage.setItem(CHAT_HISTORY_LIST_DEFINE, JSON.stringify(histories));
     }, [messages]);
 
     useEffect(() => {
@@ -99,7 +111,9 @@ function App() {
             // 否则，添加新的用户消息
             const newUserMessage = { role: 'user', content, timestamp: new Date().toISOString() };
             updatedMessages = [...messages, newUserMessage];
-            setMessages(updatedMessages);
+            setMessages(updatedMessages, () => {
+
+            });
         }
         setInput('');
 
@@ -236,7 +250,7 @@ function App() {
         }).then((result) => {
             if (result.isConfirmed) {
                 setMessages([]);
-                localStorage.removeItem('geminiChatAppHistory_v1');
+                localStorage.removeItem(CHAT_HISTORY_LIST_DEFINE);
                 Swal.fire(
                     '已清空!',
                     '所有历史记录已被删除。',
@@ -247,7 +261,7 @@ function App() {
     };
 
     const exportHistory = () => {
-        const historyData = localStorage.getItem('geminiChatAppHistory_v1'); // 从 localStorage 获取历史记录
+        const historyData = localStorage.getItem(CHAT_HISTORY_LIST_DEFINE); // 从 localStorage 获取历史记录
         if (!historyData) {
             Swal.fire({
                 title: '无可导出的记录',
@@ -262,7 +276,7 @@ function App() {
         const url = URL.createObjectURL(blob); // 创建 URL
         const a = document.createElement('a'); // 创建链接元素
         a.href = url;
-        a.download = `gemini_chat_history_${currentList}.json`; // 设置下载文件名
+        a.download = `gemini_chat_history_${currentListName}.json`; // 设置下载文件名
         document.body.appendChild(a);
         a.click(); // 触发下载
         document.body.removeChild(a); // 移除链接元素
@@ -293,7 +307,7 @@ function App() {
                         return;
                     }
                     setMessages(importedMessages);
-                    localStorage.setItem('geminiChatAppHistory_v1', JSON.stringify(importedMessages));
+                    localStorage.setItem(CHAT_HISTORY_LIST_DEFINE, JSON.stringify(importedMessages));
                     Swal.fire({
                         title: '导入成功',
                         text: '历史记录已成功导入。',
@@ -314,10 +328,18 @@ function App() {
         }
     };
 
+    const getNamedChatHistory = (name) => {
+        const allLists = JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [{
+            'name': 'default',
+            'history': []
+        }];
+        return allLists.find(item => item.name === name);
+    };
+
     const startNewSession = () => {
         Swal.fire({
             title: '启用新会话?',
-            text: '启用新的会话会清除已有历史记录，您可以在设置中先保存当前会话内容然后再启用新会话。',
+            text: '启用新的会话会开启新的默认会话，您可以在设置中先保存当前会话内容然后再启用新会话。',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -327,7 +349,23 @@ function App() {
         }).then((result) => {
             if (result.isConfirmed) {
                 setMessages([]);
-                localStorage.removeItem('geminiChatAppHistory_v1');
+                // 获取之前所有会话，并新增一个default的会话，如果之前有default会话，直接覆盖
+                const allLists = JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [{
+                    'name': 'default',
+                    'history': []
+                }];
+                // 如果有default会话，直接覆盖，否则新增
+                const defaultHistory = allLists.find(item => item.name === 'default');
+                if (defaultHistory) {
+                    defaultHistory.history = [];
+                } else {
+                    allLists.push({
+                        'name': 'default',
+                        'history': []
+                    });
+                }
+                setCurrentList('default');
+                localStorage.setItem(CHAT_HISTORY_LIST_DEFINE, JSON.stringify(allLists));
                 Swal.fire(
                     '已启用新会话',
                     '所有历史记录已被清除。',
@@ -409,8 +447,81 @@ function App() {
         <div className="App">
             <header>
                 <div className="title-container">
-                    <img src="/ai_studio_favicon_16x16.ico" alt="Gemini Chat Logo" className="app-logo" />
-                    {/* <h1>Gemini Chat</h1> */}
+                    <img src="/ai_studio_favicon_16x16.ico" alt="Gemini Chat Logo" className="app-logo" onClick={() => {
+                        // 弹出下拉列表，从localStorage中读取所有geminiChatAppHistory_v1，作为列表显示，并取出名称作为当前会话标题
+                        const allLists = (JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [{
+                            'name': 'default',
+                            'history': []
+                        }]).map(item => item.name);
+                        let selectedName = allLists[0]; // 默认选中第一个
+                        Swal.fire({
+                            title: '选择一个会话',
+                            input: 'select',
+                            inputOptions: allLists,
+                            showDenyButton: true,
+                            confirmButtonText: '选择',
+                            denyButtonText: '删除此会话',
+                            didOpen: (modal) => {
+                                const select = modal.querySelector('select');
+                                select.addEventListener('change', (e) => {
+                                    selectedName = allLists[e.target.value]; // 直接保存名称而不是索引
+                                });
+                                selectedName = allLists[select.value]; // 初始化选中值
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const idx = parseInt(result.value);
+                                const name = allLists[idx];
+                                setCurrentList(name);
+                                const history = getNamedChatHistory(name);
+                                if (history) {
+                                    setMessages(history.history);
+                                }
+                            } else if (result.isDenied) {
+                                // 使用保存的名称而不是尝试从DOM中获取
+                                Swal.fire({
+                                    title: '确认删除',
+                                    text: `确定要删除会话 "${selectedName}" 吗？`,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: '确定删除',
+                                    cancelButtonText: '取消'
+                                }).then((confirmResult) => {
+                                    if (confirmResult.isConfirmed) {
+                                        // 从localStorage中删除选中的会话
+                                        const histories = JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [];
+                                        const updatedHistories = histories.filter(item => item.name !== selectedName);
+                                        localStorage.setItem(CHAT_HISTORY_LIST_DEFINE, JSON.stringify(updatedHistories));
+
+                                        // 如果删除的是当前会话，切换到default会话
+                                        if (selectedName === currentListName) {
+                                            setCurrentList('default');
+                                            const defaultHistory = getNamedChatHistory('default');
+                                            setMessages(defaultHistory ? defaultHistory.history : []);
+                                        }
+
+                                        Swal.fire('已删除', `会话 "${selectedName}" 已被删除`, 'success');
+                                    }
+                                });
+                            }
+                        });
+                    }} />
+                    {/* 添加一个当前对话的标题，宽度自适应，点击后可以编辑标题 */}
+                    <input type="text" value={currentListName} onChange={(e) => { setCurrentList(e.target.value) }} onBlur={(e) => {
+                        setCurrentList(e.target.value);
+                        // 更新localStorage
+                        const histories = JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [];
+                        const currentHistory = histories.find(item => item.name === currentListName);
+                        if (currentHistory) {
+                            currentHistory.history = messages;
+                        } else {
+                            histories.push({
+                                'name': currentListName,
+                                'history': messages
+                            });
+                        }
+                        localStorage.setItem(CHAT_HISTORY_LIST_DEFINE, JSON.stringify(histories));
+                    }} className="current-session-title" />
                 </div>
                 <div className="header-buttons">
                     <button onClick={startNewSession} className="new-session-button">
