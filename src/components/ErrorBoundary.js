@@ -4,18 +4,21 @@ import Swal from 'sweetalert2';
 class ErrorBoundary extends Component {
     constructor(props) {
         super(props);
-        this.state = { hasError: false };
+        this.state = {
+            hasError: false,
+            errorMessage: '',
+        };
     }
 
     static getDerivedStateFromError(error) {
-        return { hasError: true };
+        return { hasError: true, errorMessage: error.message };
     }
 
     componentDidCatch(error, errorInfo) {
         console.error("Error caught in ErrorBoundary:", error, errorInfo);
         Swal.fire({
             title: '发生错误',
-            text: '请刷新页面或稍后再试。',
+            text: '请刷新页面或稍后再试。 [' + error.message + ']',
             icon: 'error',
             confirmButtonText: '刷新',
         }).then(() => {
@@ -25,10 +28,10 @@ class ErrorBoundary extends Component {
 
     render() {
         if (this.state.hasError) {
-            return <h1>发生错误，请刷新页面。</h1>;
+            return (<h1>发生错误，请刷新页面。 [{this.state.errorMessage}]</h1>);
         }
 
-        return this.props.children; 
+        return this.props.children;
     }
 }
 
