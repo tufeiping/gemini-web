@@ -10,8 +10,10 @@ html {
 .App {
   display: flex;
   flex-direction: column;
-  width: 100%; /* 确保宽度为100% */
-  max-width: 1000px; /* 最大宽度可以保留 */
+  width: 100%;
+  /* 确保宽度为100% */
+  max-width: 1000px;
+  /* 最大宽度可以保留 */
   height: 100vh;
   margin: 0 auto;
   padding: 20px;
@@ -368,9 +370,12 @@ button:hover {
 .title-container {
   display: flex;
   align-items: center;
-  min-width: 0; /* 允许容器缩小到小于内容宽度 */
-  flex: 1; /* 占据剩余空间 */
-  margin-right: 10px; /* 与按钮保持间距 */
+  min-width: 0;
+  /* 允许容器缩小到小于内容宽度 */
+  flex: 1;
+  /* 占据剩余空间 */
+  margin-right: 10px;
+  /* 与按钮保持间距 */
 }
 
 .current-session-title {
@@ -387,15 +392,20 @@ button:hover {
   box-sizing: border-box;
   font-size: 14px;
   line-height: 24px;
-  border: none; /* 移除边框 */
-  background: transparent; /* 移除背景色 */
-  outline: none; /* 移除点击时的轮廓 */
+  border: none;
+  /* 移除边框 */
+  background: transparent;
+  /* 移除背景色 */
+  outline: none;
+  /* 移除点击时的轮廓 */
 }
 
 .current-session-title:hover,
 .current-session-title:focus {
-  background-color: rgba(0, 0, 0, 0.05); /* 悬停和聚焦时添加轻微背景色 */
-  border-radius: 4px; /* 添加圆角 */
+  background-color: rgba(0, 0, 0, 0.05);
+  /* 悬停和聚焦时添加轻微背景色 */
+  border-radius: 4px;
+  /* 添加圆角 */
 }
 
 .app-logo {
@@ -516,7 +526,8 @@ button:hover {
 .header-buttons {
   display: flex;
   gap: 8px;
-  flex-shrink: 0; /* 防止按钮被压缩 */
+  flex-shrink: 0;
+  /* 防止按钮被压缩 */
 }
 
 .new-session-button,
@@ -534,7 +545,8 @@ button:hover {
   white-space: nowrap;
   min-width: 100px;
   gap: 5px;
-  height: 32px; /* 确保按钮高度一致 */
+  height: 32px;
+  /* 确保按钮高度一致 */
   box-sizing: border-box;
 }
 
@@ -701,81 +713,115 @@ pre>code {
 }
 
 .swal2-popup {
-    width: 90%; /* 适应移动端 */
-    max-width: 500px; /* 最大宽度 */
+  width: 90%;
+  /* 适应移动端 */
+  max-width: 500px;
+  /* 最大宽度 */
 }
 
 .swal2-input {
-    width: 100%; /* 输入框宽度 */
-    margin-bottom: 10px; /* 输入框间距 */
+  width: 100%;
+  /* 输入框宽度 */
+  margin-bottom: 10px;
+  /* 输入框间距 */
 }
 
 .settings-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px; /* 增加间距 */
-    overflow: hidden
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* 增加间距 */
+  overflow: hidden
 }
 
 .setting-item {
-    display: flex;
-    flex-direction: column; /* 垂直排列 */
+  display: flex;
+  flex-direction: column;
+  /* 垂直排列 */
 }
 
 .setting-item label {
-    margin-bottom: 5px; /* 标签与输入框之间的间距 */
+  margin-bottom: 5px;
+  /* 标签与输入框之间的间距 */
 }
 
 .setting-item input,
 .setting-item select {
-    width: 100%; /* 输入框和选择框宽度 */
-    padding: 10px; /* 内边距 */
-    border: 1px solid #e1e4e8; /* 边框 */
-    border-radius: 4px; /* 圆角 */
-    box-sizing: border-box; /* 包含内边距和边框 */
+  width: 100%;
+  /* 输入框和选择框宽度 */
+  padding: 10px;
+  /* 内边距 */
+  border: 1px solid #e1e4e8;
+  /* 边框 */
+  border-radius: 4px;
+  /* 圆角 */
+  box-sizing: border-box;
+  /* 包含内边距和边框 */
 }
 
 .loading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.5em;
-    color: #2196F3; /* loading 文字颜色 */
-    z-index: 1000; /* 确保在其他元素之上 */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5em;
+  color: #2196F3;
+  /* loading 文字颜色 */
+  z-index: 1000;
+  /* 确保在其他元素之上 */
 }
 
 .loading::after {
-    content: '';
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    border: 3px solid #2196F3; /* loading 动画颜色 */
-    border-radius: 50%;
-    border-top-color: transparent; /* 透明顶部 */
-    animation: spin 1s linear infinite; /* 旋转动画 */
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 3px solid #2196F3;
+  /* loading 动画颜色 */
+  border-radius: 50%;
+  border-top-color: transparent;
+  /* 透明顶部 */
+  animation: spin 1s linear infinite;
+  /* 旋转动画 */
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* 在小屏幕上调整按钮样式 */
 @media (max-width: 480px) {
+
   .new-session-button span,
   .settings-button span {
-    display: none; /* 隐藏按钮文字 */
+    display: none;
+    /* 隐藏按钮文字 */
   }
-  
+
   .new-session-button,
   .settings-button {
-    padding: 5px 8px; /* 减小按钮内边距 */
-    min-width: auto; /* 移除最小宽度限制 */
+    padding: 5px 8px;
+    /* 减小按钮内边距 */
+    min-width: auto;
+    /* 移除最小宽度限制 */
   }
 }
 
+.github-icon {
+  display: inline-block;
+  margin-right: 5px;
+  width: 24px;
+  height: 24px;
+}
+
+.github-link {
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
