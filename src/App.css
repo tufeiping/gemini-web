@@ -825,3 +825,25 @@ pre>code {
   align-items: center;
   text-align: left;
 }
+
+.empty-chat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+}
+
+.empty-chat-icon {
+    width: 120px;
+    height: 120px;
+    opacity: 0.6;
+    margin-bottom: 20px;
+}
+
+.empty-chat-hint {
+    font-size: 14px;
+    color: #999;
+    margin-top: 8px;
+}

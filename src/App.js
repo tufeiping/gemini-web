@@ -241,6 +241,12 @@ function App() {
         </svg>
     );
 
+    const NewSessionIcon = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12 21.5C12 20.1833 11.75 18.95 11.25 17.8C10.75 16.6333 10.075 15.625 9.225 14.775C8.375 13.925 7.36667 13.25 6.2 12.75C5.05 12.25 3.81667 12 2.5 12C3.81667 12 5.05 11.75 6.2 11.25C7.36667 10.75 8.375 10.075 9.225 9.225C10.075 8.375 10.75 7.375 11.25 6.225C11.75 5.05833 12 3.81667 12 2.5C12 3.81667 12.25 5.05833 12.75 6.225C13.25 7.375 13.925 8.375 14.775 9.225C15.625 10.075 16.625 10.75 17.775 11.25C18.9417 11.75 20.1833 12 21.5 12C20.1833 12 18.9417 12.25 17.775 12.75C16.625 13.25 15.625 13.925 14.775 14.775C13.925 15.625 13.25 16.6333 12.75 17.8C12.25 18.95 12 20.1833 12 21.5Z" className="sparkle" />
+        </svg>
+    );
+
     const deleteMessage = (index) => {
         Swal.fire({
             title: '确定要删除这条消息吗?',
@@ -425,7 +431,7 @@ function App() {
                     <button id="clearBtn" className="swal2-confirm swal2-styled">🗑 删除历史记录</button>
                 </div>
                 <div className="setting-item">
-                <p>本Chat项目所有的信息均保存在本地，没有服务端存储。<div className="github-link"><span className="github-icon"><GitHubIcon/></span>代码仓库地址: <a href="https://github.com/tufeiping/gemini-web" target="_blank" rel="noopener noreferrer">https://github.com/tufeiping/gemini-web</a></div></p>
+                    <p>本Chat项目所有的信息均保存在本地，没有服务端存储。<div className="github-link"><span className="github-icon"><GitHubIcon /></span>代码仓库地址: <a href="https://github.com/tufeiping/gemini-web" target="_blank" rel="noopener noreferrer">https://github.com/tufeiping/gemini-web</a></div></p>
                 </div>
             </div>
         );
@@ -548,9 +554,7 @@ function App() {
                 </div>
                 <div className="header-buttons">
                     <button onClick={startNewSession} className="new-session-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 21.5C12 20.1833 11.75 18.95 11.25 17.8C10.75 16.6333 10.075 15.625 9.225 14.775C8.375 13.925 7.36667 13.25 6.2 12.75C5.05 12.25 3.81667 12 2.5 12C3.81667 12 5.05 11.75 6.2 11.25C7.36667 10.75 8.375 10.075 9.225 9.225C10.075 8.375 10.75 7.375 11.25 6.225C11.75 5.05833 12 3.81667 12 2.5C12 3.81667 12.25 5.05833 12.75 6.225C13.25 7.375 13.925 8.375 14.775 9.225C15.625 10.075 16.625 10.75 17.775 11.25C18.9417 11.75 20.1833 12 21.5 12C20.1833 12 18.9417 12.25 17.775 12.75C16.625 13.25 15.625 13.925 14.775 14.775C13.925 15.625 13.25 16.6333 12.75 17.8C12.25 18.95 12 20.1833 12 21.5Z" className="sparkle" />
-                        </svg>
+                        <NewSessionIcon />
                         新会话
                     </button>
                     <button onClick={handleSettingsClick} className="settings-button">
@@ -559,52 +563,60 @@ function App() {
                 </div>
             </header>
             <div className="chat-container" ref={chatContainerRef}>
-                {messages.map((message, index) => (
-                    <div key={index} className={`message ${message.role}`}>
-                        {message.role === 'user' ? (
-                            <>
-                                <UserAvatar />
-                                <div className="message-content">
-                                    <ReactMarkdown
-                                        remarkPlugins={[remarkMath, remarkGfm]} // 添加 remark-gfm
-                                        rehypePlugins={[rehypeKatex, rehypeSanitize]} // 添加 rehype-sanitize
-                                        components={renderers}
-                                    >
-                                        {message.content}
-                                    </ReactMarkdown>
-                                    <div className="message-toolbar">
-                                        <div>
-                                            <button onClick={() => copyToClipboard(message.content)}>复制</button>
-                                            <button onClick={() => deleteMessage(index)} className="delete-button">删除</button>
-                                            <button onClick={() => resendMessage(message.content)} className="resend-button">重新发送</button>
-                                        </div>
-                                        <span>{formatMessageTime(message.timestamp)}</span>
-                                    </div>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <LLMAvatar />
-                                <div className="message-content">
-                                    <ReactMarkdown
-                                        remarkPlugins={[remarkMath, remarkGfm]} // 添加 remark-gfm
-                                        rehypePlugins={[rehypeKatex, rehypeSanitize]} // 添加 rehype-sanitize
-                                        components={renderers}
-                                    >
-                                        {message.content}
-                                    </ReactMarkdown>
-                                    <div className="message-toolbar">
-                                        <div>
-                                            <button onClick={() => copyToClipboard(message.content)}>复制</button>
-                                            <button onClick={() => deleteMessage(index)} className="delete-button">删除</button>
-                                        </div>
-                                        <span>{formatMessageTime(message.timestamp)}</span>
-                                    </div>
-                                </div>
-                            </>
-                        )}
+                {messages.length === 0 ? (
+                    <div className="empty-chat">
+                        <img src="/outline.svg" alt="No messages" className="empty-chat-icon" />
+                        <p>还没有任何消息</p>
+                        <p className="empty-chat-hint">开始新的对话吧!</p>
                     </div>
-                ))}
+                ) : (
+                    messages.map((message, index) => (
+                        <div key={index} className={`message ${message.role}`}>
+                            {message.role === 'user' ? (
+                                <>
+                                    <UserAvatar />
+                                    <div className="message-content">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkMath, remarkGfm]} // 添加 remark-gfm
+                                            rehypePlugins={[rehypeKatex, rehypeSanitize]} // 添加 rehype-sanitize
+                                            components={renderers}
+                                        >
+                                            {message.content}
+                                        </ReactMarkdown>
+                                        <div className="message-toolbar">
+                                            <div>
+                                                <button onClick={() => copyToClipboard(message.content)}>复制</button>
+                                                <button onClick={() => deleteMessage(index)} className="delete-button">删除</button>
+                                                <button onClick={() => resendMessage(message.content)} className="resend-button">重新发送</button>
+                                            </div>
+                                            <span>{formatMessageTime(message.timestamp)}</span>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <LLMAvatar />
+                                    <div className="message-content">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkMath, remarkGfm]} // 添加 remark-gfm
+                                            rehypePlugins={[rehypeKatex, rehypeSanitize]} // 添加 rehype-sanitize
+                                            components={renderers}
+                                        >
+                                            {message.content}
+                                        </ReactMarkdown>
+                                        <div className="message-toolbar">
+                                            <div>
+                                                <button onClick={() => copyToClipboard(message.content)}>复制</button>
+                                                <button onClick={() => deleteMessage(index)} className="delete-button">删除</button>
+                                            </div>
+                                            <span>{formatMessageTime(message.timestamp)}</span>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    ))
+                )}
             </div>
             <form onSubmit={handleSubmit} className="input-form">
                 <input
