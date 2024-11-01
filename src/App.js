@@ -19,7 +19,10 @@ import './App.css';
 
 const API_KEY_DEFINE = 'gemini_chat_app_api_key';
 const MODEL_DEFINE = 'gemini_chat_app_model';
-const MODEL_LIST_DEFINE = [{ key: 'gemini-1.5-flash-latest', value: 'Gemini 1.5 Flash (最新)' }, {key: 'gemini-1.5-flash-002', value: 'Gemini 1.5 Flash 002'}, { key: 'gemini-1.0-pro', value: 'Gemini 1.0 Pro' }];
+const MODEL_LIST_DEFINE = [{ key: 'gemini-1.5-flash-latest', value: 'Gemini 1.5 Flash' },
+{ key: 'gemini-1.5-flash-002', value: 'Gemini 1.5 Flash 002 (最新)' },
+{ key: 'gemini-1.5-flash-8b', value: 'Gemini 1.5 Flash 8b' },
+{ key: 'gemini-1.0-pro', value: 'Gemini 1.0 Pro' }];
 const CHAT_HISTORY_LIST_DEFINE = 'gemini-chat-history_v1';
 const DEFAULT_LIST_NAME = 'gemini-chat-history-default';
 const DEFAULT_LIST_SELECTED_NAME = 'default';
