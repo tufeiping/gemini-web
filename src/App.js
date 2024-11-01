@@ -435,6 +435,7 @@ function App() {
                 </div>
                 <div className="setting-item">
                     <p>本Chat项目所有的信息均保存在本地，没有服务端存储。<div className="github-link"><span className="github-icon"><GitHubIcon /></span>代码仓库地址: <a href="https://github.com/tufeiping/gemini-web" target="_blank" rel="noopener noreferrer">https://github.com/tufeiping/gemini-web</a></div></p>
+                    <p>没有API Key的可以到<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Google Cloud Console</a>申请</p>
                 </div>
             </div>
         );
