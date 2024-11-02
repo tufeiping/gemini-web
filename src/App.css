@@ -731,7 +731,8 @@ pre>code {
   flex-direction: column;
   gap: 10px;
   /* 增加间距 */
-  overflow: hidden
+  overflow: hidden;
+  font-size: 0.8rem;
 }
 
 .setting-item {
