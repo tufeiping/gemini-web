@@ -13,24 +13,12 @@ import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'; // 导入
 import rehypeSanitize from 'rehype-sanitize'; // 导入 rehype-sanitize
 import ErrorBoundary from './components/ErrorBoundary'; // 引入 ErrorBoundary
 
+import { API_KEY_DEFINE, MODEL_DEFINE, CHAT_HISTORY_LIST_DEFINE, DEFAULT_LIST_NAME, DEFAULT_LIST_SELECTED_NAME, EMPTY_HISTORY_LIST, MODEL_LIST_DEFINE, CHAT_CONTEXT_LIST_DEFINE, CHAT_CONTEXT_DEFAULT } from './Config';
+
 import 'katex/dist/katex.min.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './App.css';
 
-const API_KEY_DEFINE = 'gemini_chat_app_api_key';
-const MODEL_DEFINE = 'gemini_chat_app_model';
-const MODEL_LIST_DEFINE = [{ key: 'gemini-1.5-flash-latest', value: 'Gemini 1.5 Flash' },
-{ key: 'gemini-1.5-flash-002', value: 'Gemini 1.5 Flash 002 (最新)' },
-{ key: 'gemini-1.5-flash-8b', value: 'Gemini 1.5 Flash 8b' },
-{ key: 'gemini-1.0-pro', value: 'Gemini 1.0 Pro' }];
-const CHAT_HISTORY_LIST_DEFINE = 'gemini-chat-history_v1';
-const DEFAULT_LIST_NAME = 'gemini-chat-history-default';
-const DEFAULT_LIST_SELECTED_NAME = 'default';
-
-const EMPTY_HISTORY_LIST = [{
-    'name': DEFAULT_LIST_SELECTED_NAME,
-    'history': []
-}];
 
 function App() {
     const [apiKey, setApiKey] = useState(() =>
@@ -39,6 +27,7 @@ function App() {
     const [model, setModel] = useState(() => localStorage.getItem(MODEL_DEFINE) || MODEL_LIST_DEFINE[0].key);
     const [currentListName, setCurrentList] = useState(() => localStorage.getItem(DEFAULT_LIST_NAME) || DEFAULT_LIST_SELECTED_NAME); // 当前列表
     const [input, setInput] = useState('');
+    const [contextLength, setContextLength] = useState(() => localStorage.getItem(CHAT_CONTEXT_DEFAULT) || 6);
     const [messages, setMessages] = useState(() => {
         const histories = JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [];
         try {
@@ -142,7 +131,8 @@ function App() {
         setInput('');
 
         // 获取最近6条消息作为上下文
-        const recentMessages = updatedMessages.slice(-6);
+
+        const recentMessages = updatedMessages.slice(0 - contextLength);
         const context = recentMessages.map(msg => ({
             role: msg.role === 'user' ? 'user' : 'model',
             parts: [{ text: msg.content }]
@@ -434,6 +424,16 @@ function App() {
                     <button id="clearBtn" className="swal2-confirm swal2-styled">🗑 删除历史记录</button>
                 </div>
                 <div className="setting-item">
+                    <label htmlFor="maxTokens">关联上下文(影响tokens用量):</label>
+                    <select id="context-length" defaultValue={contextLength}>
+                        {CHAT_CONTEXT_LIST_DEFINE.map((item, index) => {
+                            return (
+                                <option key={index} value={item.key} selected={item.key === contextLength}>{item.value}</option>
+                            );
+                        })}
+                    </select>
+                </div>
+                <div className="setting-item">
                     <p>本Chat项目所有的信息均保存在本地，没有服务端存储。<div className="github-link"><span className="github-icon"><GitHubIcon /></span>代码仓库地址: <a href="https://github.com/tufeiping/gemini-web" target="_blank" rel="noopener noreferrer">https://github.com/tufeiping/gemini-web</a></div></p>
                     <p>没有API Key的可以到<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Google Cloud Console</a>申请</p>
                 </div>
@@ -466,10 +466,13 @@ function App() {
             preConfirm: () => {
                 const newApiKey = document.getElementById('apiKey').value;
                 const newModel = document.getElementById('model').value;
+                const newContextLength = document.getElementById('context-length').value;
                 setApiKey(newApiKey);
                 setModel(newModel);
+                setContextLength(newContextLength);
                 localStorage.setItem(API_KEY_DEFINE, newApiKey);
                 localStorage.setItem(MODEL_DEFINE, newModel);
+                localStorage.setItem(CHAT_CONTEXT_DEFAULT, newContextLength);
             }
         });
     };
