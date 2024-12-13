@@ -12,10 +12,12 @@ export const EMPTY_HISTORY_LIST = [{
 }];
 
 // models define
-export const MODEL_LIST_DEFINE = [{ key: 'gemini-1.5-flash-latest', value: 'Gemini 1.5 Flash' },
-{ key: 'gemini-1.5-flash-002', value: 'Gemini 1.5 Flash 002 (最新)' },
-{ key: 'gemini-1.5-flash-8b', value: 'Gemini 1.5 Flash 8b' },
-{ key: 'gemini-1.0-pro', value: 'Gemini 1.0 Pro' }];
+export const MODEL_LIST_DEFINE = [
+    { key: 'gemini-2.0-flash-exp', value: ' Gemini 2.0 Flash Experimental  (最新)' },
+    { key: 'gemini-1.5-flash-latest', value: 'Gemini 1.5 Flash' },
+    { key: 'gemini-1.5-flash-002', value: 'Gemini 1.5 Flash 002' },
+    { key: 'gemini-1.5-flash-8b', value: 'Gemini 1.5 Flash 8b' },
+    { key: 'gemini-1.0-pro', value: 'Gemini 1.0 Pro' }];
 
 // chat context length define
 export const CHAT_CONTEXT_LIST_DEFINE = [{ key: '6', value: '6' },
