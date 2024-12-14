@@ -327,7 +327,7 @@ function App() {
                     if (importedMessages.length === 0) {
                         Swal.fire({
                             title: '导入失败',
-                            text: '导入的文件不包含任何聊天记录。',
+                            text: '��入的文件不包含任何聊天记录。',
                             icon: 'error',
                             confirmButtonText: '确定'
                         });
@@ -398,16 +398,30 @@ function App() {
             <div className="settings-container">
                 <div className="setting-item">
                     <label htmlFor="apiKey">API Key:</label>
-                    <input
-                        type={apiKeyVisible ? "text" : "password"}
-                        id="apiKey"
-                        value={apiKey}
-                        className="swal2-input"
-                        style={{ margin: 0, fontSize: '0.8em', height: '30px' }}
-                        onFocus={() => setApiKeyVisible(true)}
-                        onBlur={() => setApiKeyVisible(false)}
-                        onChange={(e) => setApiKey(e.target.value)}
-                    />
+                    <div className="input-container" style={{ position: 'relative' }}>
+                        <input
+                            type={apiKeyVisible ? "text" : "password"}
+                            id="apiKey"
+                            value={apiKey}
+                            className="swal2-input"
+                            style={{ margin: 0, fontSize: '0.8em', height: '30px', paddingRight: '30px' }}
+                            onFocus={() => setApiKeyVisible(true)}
+                            onBlur={() => setApiKeyVisible(false)}
+                            onChange={(e) => setApiKey(e.target.value)}
+                        />
+                        <span 
+                            onClick={() => setApiKeyVisible(!apiKeyVisible)} 
+                            style={{ 
+                                position: 'absolute', 
+                                right: '5px', 
+                                top: '50%', 
+                                transform: 'translateY(-50%)', 
+                                cursor: 'pointer' 
+                            }}
+                        >
+                            {apiKeyVisible ? '🙈' : '👁️'}
+                        </span>
+                    </div>
                 </div>
                 <div className="setting-item">
                     <label htmlFor="model">选择模型:</label>
@@ -546,7 +560,7 @@ function App() {
                             }
                         });
                     }} />
-                    {/* 添加一个当前对话的标题，宽度自适应，点击后可以编辑标题 */}
+                    {/* 添加一个当前对话的标题，宽度自适应，���击后可以编辑标题 */}
                     <input type="text" value={currentListName} onChange={(e) => { fireSetCurrentList(e.target.value) }} onBlur={(e) => {
                         fireSetCurrentList(e.target.value);
                         // 更新localStorage
