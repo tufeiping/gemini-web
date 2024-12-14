@@ -410,7 +410,7 @@ function App() {
                             onChange={(e) => setApiKey(e.target.value)}
                         />
                         <span 
-                            onClick={() => setApiKeyVisible(!apiKeyVisible)} 
+                            onClick={() => setApiKeyVisible(prev => !prev)}
                             style={{ 
                                 position: 'absolute', 
                                 right: '5px', 
