@@ -327,7 +327,7 @@ function App() {
                     if (importedMessages.length === 0) {
                         Swal.fire({
                             title: '导入失败',
-                            text: '��入的文件不包含任何聊天记录。',
+                            text: '导入的文件不包含任何聊天记录。',
                             icon: 'error',
                             confirmButtonText: '确定'
                         });
@@ -560,7 +560,7 @@ function App() {
                             }
                         });
                     }} />
-                    {/* 添加一个当前对话的标题，宽度自适应，���击后可以编辑标题 */}
+                    {/* 添加一个当前对话的标题，宽度自适应，点击后可以编辑标题 */}
                     <input type="text" value={currentListName} onChange={(e) => { fireSetCurrentList(e.target.value) }} onBlur={(e) => {
                         fireSetCurrentList(e.target.value);
                         // 更新localStorage
