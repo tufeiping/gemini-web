@@ -401,11 +401,12 @@ function App() {
                     <input
                         type={apiKeyVisible ? "text" : "password"}
                         id="apiKey"
-                        defaultValue={apiKey}
+                        value={apiKey}
                         className="swal2-input"
                         style={{ margin: 0, fontSize: '0.8em', height: '30px' }}
                         onFocus={() => setApiKeyVisible(true)}
                         onBlur={() => setApiKeyVisible(false)}
+                        onChange={(e) => setApiKey(e.target.value)}
                     />
                 </div>
                 <div className="setting-item">
