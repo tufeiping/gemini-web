@@ -55,6 +55,7 @@ function App() {
     const [, forceUpdate] = useState();
     const chatContainerRef = useRef(null);
     const [loading, setLoading] = useState(false); // 添加 loading 状态
+    const [apiKeyVisible, setApiKeyVisible] = useState(false);
 
     useEffect(() => {
         const histories = JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [];
@@ -398,11 +399,13 @@ function App() {
                 <div className="setting-item">
                     <label htmlFor="apiKey">API Key:</label>
                     <input
-                        type="text"
+                        type={apiKeyVisible ? "text" : "password"}
                         id="apiKey"
                         defaultValue={apiKey}
                         className="swal2-input"
                         style={{ margin: 0, fontSize: '0.8em', height: '30px' }}
+                        onFocus={() => setApiKeyVisible(true)}
+                        onBlur={() => setApiKeyVisible(false)}
                     />
                 </div>
                 <div className="setting-item">
