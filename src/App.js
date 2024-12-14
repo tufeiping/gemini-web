@@ -55,7 +55,6 @@ function App() {
     const [, forceUpdate] = useState();
     const chatContainerRef = useRef(null);
     const [loading, setLoading] = useState(false); // 添加 loading 状态
-    const [apiKeyVisible, setApiKeyVisible] = useState(false);
 
     useEffect(() => {
         const histories = JSON.parse(localStorage.getItem(CHAT_HISTORY_LIST_DEFINE)) || [];
@@ -175,9 +174,28 @@ function App() {
     };
 
     const copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('内容已复制到剪贴板');
-        });
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                Swal.fire('成功', '内容已复制到剪贴板', 'success');
+            }).catch(err => {
+                console.error('复制到剪贴板失败:', err);
+                Swal.fire('错误', '复制失败，请手动复制内容。', 'error');
+            });
+        } else {
+            // 兼容处理：使用旧的复制方式
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                Swal.fire('成功', '内容已复制到剪贴板', 'success');
+            } catch (err) {
+                console.error('复制到剪贴板失败:', err);
+                Swal.fire('错误', '复制失败，请手动复制内容。', 'error');
+            }
+            document.body.removeChild(textArea);
+        }
     };
 
     const renderers = {
@@ -400,26 +418,24 @@ function App() {
                     <label htmlFor="apiKey">API Key:</label>
                     <div className="input-container" style={{ position: 'relative' }}>
                         <input
-                            type={apiKeyVisible ? "text" : "password"}
+                            type="password"
                             id="apiKey"
-                            value={apiKey}
+                            defaultValue={apiKey}
                             className="swal2-input"
-                            style={{ margin: 0, fontSize: '0.8em', height: '30px', paddingRight: '30px' }}
-                            onFocus={() => setApiKeyVisible(true)}
-                            onBlur={() => setApiKeyVisible(false)}
+                            style={{ margin: 0, fontSize: '0.8em', height: '30px', paddingRight: '30px' }} // 添加右侧内边距
                             onChange={(e) => setApiKey(e.target.value)}
                         />
-                        <span 
-                            onClick={() => setApiKeyVisible(prev => !prev)}
-                            style={{ 
-                                position: 'absolute', 
-                                right: '5px', 
-                                top: '50%', 
-                                transform: 'translateY(-50%)', 
-                                cursor: 'pointer' 
+                        <span
+                            onClick={() => copyToClipboard(apiKey)} // 使用函数式更新
+                            style={{
+                                position: 'absolute',
+                                right: '5px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                cursor: 'pointer'
                             }}
                         >
-                            {apiKeyVisible ? '🙈' : '👁️'}
+                            📋
                         </span>
                     </div>
                 </div>
