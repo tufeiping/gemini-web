@@ -14,6 +14,7 @@ export const EMPTY_HISTORY_LIST = [{
 // models define
 export const MODEL_LIST_DEFINE = [
     { key: 'gemini-2.0-flash-exp', value: ' Gemini 2.0 Flash Experimental  (最新)' },
+    { key: 'gemini-2.0-flash-thinking-exp-1219', value: 'Gemini 2.0 Flash Thinking' },
     { key: 'gemini-1.5-flash-latest', value: 'Gemini 1.5 Flash' },
     { key: 'gemini-1.5-flash-002', value: 'Gemini 1.5 Flash 002' },
     { key: 'gemini-1.5-flash-8b', value: 'Gemini 1.5 Flash 8b' },
