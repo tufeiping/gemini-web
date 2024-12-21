@@ -1,21 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import ReactMarkdown from 'react-markdown';
-import { InlineMath, BlockMath } from 'react-katex';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
 import Swal from 'sweetalert2';
-import remarkGfm from 'remark-gfm'; // 引入 remark-gfm
-import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'; // 导入 docco 样式
-import rehypeSanitize from 'rehype-sanitize'; // 导入 rehype-sanitize
-import ErrorBoundary from './components/ErrorBoundary'; // 引入 ErrorBoundary
-
+import ErrorBoundary from './components/ErrorBoundary'; 
+import MsgDisplay from './components/MsgDisplay';
+import { LLMAvatar, UserAvatar, GitHubIcon, NewSessionIcon } from './components/Icons';
+import { copyToClipboard } from './components/utils';
 import { API_KEY_DEFINE, MODEL_DEFINE, CHAT_HISTORY_LIST_DEFINE, DEFAULT_LIST_NAME, DEFAULT_LIST_SELECTED_NAME, EMPTY_HISTORY_LIST, MODEL_LIST_DEFINE, CHAT_CONTEXT_LIST_DEFINE, CHAT_CONTEXT_DEFAULT } from './Config';
 
-import 'katex/dist/katex.min.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './App.css';
 
@@ -25,7 +18,7 @@ function App() {
         localStorage.getItem(API_KEY_DEFINE) || process.env.REACT_APP_DEFAULT_API_KEY || ''
     );
     const [model, setModel] = useState(() => localStorage.getItem(MODEL_DEFINE) || MODEL_LIST_DEFINE[0].key);
-    const [currentListName, setCurrentList] = useState(() => localStorage.getItem(DEFAULT_LIST_NAME) || DEFAULT_LIST_SELECTED_NAME); // 当前列表
+    const [currentListName, setCurrentList] = useState(() => localStorage.getItem(DEFAULT_LIST_NAME) || DEFAULT_LIST_SELECTED_NAME);
     const [input, setInput] = useState('');
     const [contextLength, setContextLength] = useState(() => localStorage.getItem(CHAT_CONTEXT_DEFAULT) || 6);
     const [messages, setMessages] = useState(() => {
@@ -86,6 +79,13 @@ function App() {
     const formatMessageTime = useCallback((timestamp) => {
         const now = new Date();
         const messageTime = new Date(timestamp);
+
+        // 检查 messageTime 是否有效
+        if (isNaN(messageTime.getTime())) {
+            console.error('Invalid timestamp:', timestamp);
+            return '未知时间'; // 返回一个默认值
+        }
+
         const diffInSeconds = Math.floor((now - messageTime) / 1000);
 
         if (diffInSeconds < 60) {
@@ -173,92 +173,6 @@ function App() {
         handleSubmit(null, content);
     };
 
-    const copyToClipboard = (text) => {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(text).then(() => {
-                Swal.fire('成功', '内容已复制到剪贴板', 'success');
-            }).catch(err => {
-                console.error('复制到剪贴板失败:', err);
-                Swal.fire('错误', '复制失败，请手动复制内容。', 'error');
-            });
-        } else {
-            // 兼容处理：使用旧的复制方式
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                Swal.fire('成功', '内容已复制到剪贴板', 'success');
-            } catch (err) {
-                console.error('复制到剪贴板失败:', err);
-                Swal.fire('错误', '复制失败，请手动复制内容。', 'error');
-            }
-            document.body.removeChild(textArea);
-        }
-    };
-
-    const renderers = {
-        math: ({ value }) => (
-            <span className="math-block">
-                <BlockMath math={value} />
-            </span>
-        ),
-        inlineMath: ({ value }) => <InlineMath math={value} />,
-        paragraph: ({ children }) => {
-            // 检查是否只包含一个数学块
-            if (children.length === 1 && children[0].type === 'span' && children[0].props.className === 'math-block') {
-                return children;
-            }
-            return <p>{children}</p>;
-        },
-        code: ({ node, inline, className, children, ...props }) => {
-            const match = /language-(\w+)/.exec(className || '');
-            const language = match ? match[1] : '';
-            return !inline && match ? (
-                <SyntaxHighlighter
-                    language={language}
-                    style={docco}
-                    customStyle={{
-                        fontSize: '0.9em',
-                        padding: '1em',
-                    }}
-                    {...props}
-                >
-                    {String(children).replace(/\n$/, '')}
-                </SyntaxHighlighter>
-            ) : (
-                <code className={`inline-code ${className || ''}`} {...props}>
-                    {children}
-                </code>
-            );
-        },
-    };
-
-    const LLMAvatar = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="avatar llm-avatar">
-            <path d="M13.5 2C13.5 2.44425 13.3069 2.84339 13 3.11805V5H18C19.6569 5 21 6.34315 21 8V18C21 19.6569 19.6569 21 18 21H6C4.34315 21 3 19.6569 3 18V8C3 6.34315 4.34315 5 6 5H11V3.11805C10.6931 2.84339 10.5 2.44425 10.5 2C10.5 1.17157 11.1716 0.5 12 0.5C12.8284 0.5 13.5 1.17157 13.5 2ZM6 7C5.44772 7 5 7.44772 5 8V18C5 18.5523 5.44772 19 6 19H18C18.5523 19 19 18.5523 19 18V8C19 7.44772 18.5523 7 18 7H13H11H6ZM2 10H0V16H2V10ZM22 10H24V16H22V10ZM9 14.5C9.82843 14.5 10.5 13.8284 10.5 13C10.5 12.1716 9.82843 11.5 9 11.5C8.17157 11.5 7.5 12.1716 7.5 13C7.5 13.8284 8.17157 14.5 9 14.5ZM15 14.5C15.8284 14.5 16.5 13.8284 16.5 13C16.5 12.1716 15.8284 11.5 15 11.5C14.1716 11.5 13.5 12.1716 13.5 13C13.5 13.8284 14.1716 14.5 15 14.5Z"></path>
-        </svg>
-    );
-
-    const UserAvatar = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="avatar user-avatar">
-            <path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13Z"></path>
-        </svg>
-    );
-
-    const GitHubIcon = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12.001 2C6.47598 2 2.00098 6.475 2.00098 12C2.00098 16.425 4.86348 20.1625 8.83848 21.4875C9.33848 21.575 9.52598 21.275 9.52598 21.0125C9.52598 20.775 9.51348 19.9875 9.51348 19.15C7.00098 19.6125 6.35098 18.5375 6.15098 17.975C6.03848 17.6875 5.55098 16.8 5.12598 16.5625C4.77598 16.375 4.27598 15.9125 5.11348 15.9C5.90098 15.8875 6.46348 16.625 6.65098 16.925C7.55098 18.4375 8.98848 18.0125 9.56348 17.75C9.65098 17.1 9.91348 16.6625 10.201 16.4125C7.97598 16.1625 5.65098 15.3 5.65098 11.475C5.65098 10.3875 6.03848 9.4875 6.67598 8.7875C6.57598 8.5375 6.22598 7.5125 6.77598 6.1375C6.77598 6.1375 7.61348 5.875 9.52598 7.1625C10.326 6.9375 11.176 6.825 12.026 6.825C12.876 6.825 13.726 6.9375 14.526 7.1625C16.4385 5.8625 17.276 6.1375 17.276 6.1375C17.826 7.5125 17.476 8.5375 17.376 8.7875C18.0135 9.4875 18.401 10.375 18.401 11.475C18.401 15.3125 16.0635 16.1625 13.8385 16.4125C14.201 16.725 14.5135 17.325 14.5135 18.2625C14.5135 19.6 14.501 20.675 14.501 21.0125C14.501 21.275 14.6885 21.5875 15.1885 21.4875C19.259 20.1133 21.9999 16.2963 22.001 12C22.001 6.475 17.526 2 12.001 2Z"></path>
-        </svg>
-    );
-
-    const NewSessionIcon = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24" fill="none">
-            <path d="M12 21.5C12 20.1833 11.75 18.95 11.25 17.8C10.75 16.6333 10.075 15.625 9.225 14.775C8.375 13.925 7.36667 13.25 6.2 12.75C5.05 12.25 3.81667 12 2.5 12C3.81667 12 5.05 11.75 6.2 11.25C7.36667 10.75 8.375 10.075 9.225 9.225C10.075 8.375 10.75 7.375 11.25 6.225C11.75 5.05833 12 3.81667 12 2.5C12 3.81667 12.25 5.05833 12.75 6.225C13.25 7.375 13.925 8.375 14.775 9.225C15.625 10.075 16.625 10.75 17.775 11.25C18.9417 11.75 20.1833 12 21.5 12C20.1833 12 18.9417 12.25 17.775 12.75C16.625 13.25 15.625 13.925 14.775 14.775C13.925 15.625 13.25 16.6333 12.75 17.8C12.25 18.95 12 20.1833 12 21.5Z" className="sparkle" />
-        </svg>
-    );
-
     const deleteMessage = (index) => {
         Swal.fire({
             title: '确定要删除这条消息吗?',
@@ -295,6 +209,8 @@ function App() {
         }).then((result) => {
             if (result.isConfirmed) {
                 setMessages([]);
+                // 当前主题默认设置为default
+                fireSetCurrentList('default');
                 localStorage.removeItem(CHAT_HISTORY_LIST_DEFINE);
                 Swal.fire(
                     '已清空!',
@@ -351,7 +267,13 @@ function App() {
                         });
                         return;
                     }
-                    setMessages(importedMessages);
+                    // 从importedMessages中获取所有对话主题
+                    const allLists = importedMessages.map(item => item.name);
+                    // 获取defaut或默认第一条主题
+                    const defaultList = allLists[0] || DEFAULT_LIST_SELECTED_NAME;
+                    // 将importedMessages设置为defaultList的history
+                    let defaultHistory = importedMessages.find(item => item.name === "default");
+                    setMessages(defaultHistory.history);
                     localStorage.setItem(CHAT_HISTORY_LIST_DEFINE, JSON.stringify(importedMessages));
                     Swal.fire({
                         title: '导入成功',
@@ -617,13 +539,7 @@ function App() {
                                 <>
                                     <UserAvatar />
                                     <div className="message-content">
-                                        <ReactMarkdown
-                                            remarkPlugins={[remarkMath, remarkGfm]} // 添加 remark-gfm
-                                            rehypePlugins={[rehypeKatex, rehypeSanitize]} // 添加 rehype-sanitize
-                                            components={renderers}
-                                        >
-                                            {message.content}
-                                        </ReactMarkdown>
+                                        <MsgDisplay message={message.content} />
                                         <div className="message-toolbar">
                                             <div>
                                                 <button onClick={() => copyToClipboard(message.content)}>复制</button>
@@ -638,13 +554,7 @@ function App() {
                                 <>
                                     <LLMAvatar />
                                     <div className="message-content">
-                                        <ReactMarkdown
-                                            remarkPlugins={[remarkMath, remarkGfm]} // 添加 remark-gfm
-                                            rehypePlugins={[rehypeKatex, rehypeSanitize]} // 添加 rehype-sanitize
-                                            components={renderers}
-                                        >
-                                            {message.content}
-                                        </ReactMarkdown>
+                                        <MsgDisplay message={message.content} />
                                         <div className="message-toolbar">
                                             <div>
                                                 <button onClick={() => copyToClipboard(message.content)}>复制</button>
@@ -667,9 +577,9 @@ function App() {
                     placeholder="输入您的消息..."
                     disabled={loading} // 
                 />
-                <button type="submit" disabled={loading}>发送</button> {/* 禁用发送按钮 */}
+                <button type="submit" disabled={loading}>发送</button> 
             </form>
-            {loading && <div className="loading"></div>} {/* 显示 loading 动画 */}
+            {loading && <div className="loading"></div>} 
         </div>
     );
 }
